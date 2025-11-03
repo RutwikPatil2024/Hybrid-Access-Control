@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage User - AccessIQ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">AccessIQ Admin</div>
+            <div class="nav-links">
+                <a href="/admin/dashboard">← Back to Dashboard</a>
+                <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (message) { %>
+            <div class="alert alert-success">✅ <%= message %></div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger">❌ <%= error %></div>
+        <% } %>
+        
+        <div class="card">
+            <h2>👤 Manage User: <%= targetUser.username %></h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                    <h3>User Information</h3>
+                    <p><strong>Username:</strong> <%= targetUser.username %></p>
+                    <p><strong>Role:</strong> <%= targetUser.role %></p>
+                    <p><strong>Department:</strong> <%= targetUser.department %></p>
+                    <p><strong>Clearance Level:</strong> <%= targetUser.clearance_level %></p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge <%= targetUser.access_granted ? 'badge-success' : 'badge-warning' %>">
+                            <%= targetUser.access_granted ? 'Approved' : 'Pending' %>
+                        </span>
+                    </p>
+                    <p><strong>Registered:</strong> <%= new Date(targetUser.created_at).toLocaleDateString() %></p>
+                    <p><strong>Access Time:</strong> <%= targetUser.access_start_time || '09:00' %> - <%= targetUser.access_end_time || '17:00' %></p>
+                </div>
+                
+                <div>
+                    <h3>Quick Actions</h3>
+                    <% if (!targetUser.access_granted) { %>
+                        <form method="POST" action="/admin/user/<%= targetUser.id %>/approve" style="margin-bottom: 10px;">
+                            <button type="submit" class="btn btn-success">✅ Approve User</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+
+            <h3>⏰ Access Time Settings</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <div class="form-group">
+                    <label for="access_start_time">Start Time</label>
+                    <input type="time" id="access_start_time" name="access_start_time" class="form-control" 
+                           value="<%= targetUser.access_start_time || '09:00' %>">
+                </div>
+                <div class="form-group">
+                    <label for="access_end_time">End Time</label>
+                    <input type="time" id="access_end_time" name="access_end_time" class="form-control" 
+                           value="<%= targetUser.access_end_time || '17:00' %>">
+                </div>
+            </div>
+
+            <h3>🔐 Resource Permissions</h3>
+            <form method="POST" action="/admin/user/<%= targetUser.id %>/permissions">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label><strong>Resource Type</strong></label>
+                    </div>
+                    <div>
+                        <label><strong>Max Sensitivity Access</strong></label>
+                    </div>
+                    <div>
+                        <label><strong>Action</strong></label>
+                    </div>
+                </div>
+
+                <!-- Assignment Permission -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; align-items: center;">
+                    <div>
+                        <span>📝 Assignment</span>
+                    </div>
+                    <div>
+                        <select name="assignment_level" class="form-control">
+                            <option value="0">No Access</option>
+                            <option value="1" <%= permissions.find(p => p.permission_type === 'Assignment') ? 'selected' : '' %>>Level 1</option>
+                            <option value="2" <%= permissions.find(p => p.permission_type === 'Assignment') ? 'selected' : '' %>>Level 2</option>
+                            <option value="3" <%= permissions.find(p => p.permission_type === 'Assignment') ? 'selected' : '' %>>Level 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="badge <%= permissions.find(p => p.permission_type === 'Assignment') ? 'badge-success' : 'badge-warning' %>">
+                            <%= permissions.find(p => p.permission_type === 'Assignment') ? 'Assigned' : 'Not Assigned' %>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Result Permission -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; align-items: center;">
+                    <div>
+                        <span>📊 Result</span>
+                    </div>
+                    <div>
+                        <select name="result_level" class="form-control">
+                            <option value="0">No Access</option>
+                            <option value="1" <%= permissions.find(p => p.permission_type === 'Result') ? 'selected' : '' %>>Level 1</option>
+                            <option value="2" <%= permissions.find(p => p.permission_type === 'Result') ? 'selected' : '' %>>Level 2</option>
+                            <option value="3" <%= permissions.find(p => p.permission_type === 'Result') ? 'selected' : '' %>>Level 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="badge <%= permissions.find(p => p.permission_type === 'Result') ? 'badge-success' : 'badge-warning' %>">
+                            <%= permissions.find(p => p.permission_type === 'Result') ? 'Assigned' : 'Not Assigned' %>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Report Permission -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; align-items: center;">
+                    <div>
+                        <span>📋 Report</span>
+                    </div>
+                    <div>
+                        <select name="report_level" class="form-control">
+                            <option value="0">No Access</option>
+                            <option value="1" <%= permissions.find(p => p.permission_type === 'Report') ? 'selected' : '' %>>Level 1</option>
+                            <option value="2" <%= permissions.find(p => p.permission_type === 'Report') ? 'selected' : '' %>>Level 2</option>
+                            <option value="3" <%= permissions.find(p => p.permission_type === 'Report') ? 'selected' : '' %>>Level 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="badge <%= permissions.find(p => p.permission_type === 'Report') ? 'badge-success' : 'badge-warning' %>">
+                            <%= permissions.find(p => p.permission_type === 'Report') ? 'Assigned' : 'Not Assigned' %>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hidden fields for access time -->
+                <input type="hidden" name="access_start_time" id="hidden_start_time">
+                <input type="hidden" name="access_end_time" id="hidden_end_time">
+                
+                <button type="submit" class="btn btn-primary" onclick="copyTimeValues()">💾 Save Permissions & Time</button>
+            </form>
+            
+            <script>
+                function copyTimeValues() {
+                    document.getElementById('hidden_start_time').value = document.getElementById('access_start_time').value;
+                    document.getElementById('hidden_end_time').value = document.getElementById('access_end_time').value;
+                }
+                
+
+            </script>
+
+            <% if (permissions.length > 0) { %>
+                <h3 style="margin-top: 30px;">📋 Current Permissions</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Resource Type</th>
+                            <th>Max Sensitivity</th>
+                            <th>Assigned By</th>
+                            <th>Assigned Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% permissions.forEach(permission => { %>
+                            <tr>
+                                <td><%= permission.permission_type %></td>
+                                <td>Access Granted</td>
+                                <td><%= permission.granted_by %></td>
+                                <td><%= new Date(permission.granted_at).toLocaleDateString() %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

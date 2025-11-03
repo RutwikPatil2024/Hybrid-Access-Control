@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Result - AccessIQ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">AccessIQ</div>
+            <div class="nav-links">
+                <a href="/dashboard">← Back to Dashboard</a>
+                <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2>🔐 Access Evaluation Result</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                    <h3>📄 Resource Information</h3>
+                    <p><strong>Name:</strong> <%= resource.name %></p>
+                    <p><strong>Type:</strong> <%= resource.resource_type %></p>
+                    <p><strong>Department:</strong> <%= resource.owner_department %></p>
+                    <p><strong>Sensitivity Level:</strong> 
+                        <span class="badge <%= resource.sensitivity_level === 1 ? 'badge-success' : resource.sensitivity_level === 2 ? 'badge-warning' : 'badge-danger' %>">
+                            Level <%= resource.sensitivity_level %>
+                        </span>
+                    </p>
+                </div>
+                
+                <div>
+                    <h3>👤 Your Information</h3>
+                    <p><strong>Username:</strong> <%= user.username %></p>
+                    <p><strong>Role:</strong> <%= user.role %></p>
+                    <p><strong>Department:</strong> <%= user.department %></p>
+                    <p><strong>Clearance Level:</strong> Level <%= user.clearance_level %></p>
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 30px; border-radius: 10px; background: <%= result.decision === 'Permit' ? '#d4edda' : '#f8d7da' %>;">
+                <h1 style="color: <%= result.decision === 'Permit' ? '#155724' : '#721c24' %>; margin-bottom: 15px;">
+                    <%= result.decision === 'Permit' ? '✅ ACCESS GRANTED' : '❌ ACCESS DENIED' %>
+                </h1>
+                
+                <p style="font-size: 18px; color: <%= result.decision === 'Permit' ? '#155724' : '#721c24' %>;">
+                    <strong>Reason:</strong> <%= result.reason %>
+                </p>
+                
+                <% if (result.decision === 'Permit') { %>
+                    <p style="margin-top: 20px; color: #155724;">
+                        🎉 You have been granted access to this resource based on your current attributes and permissions.
+                    </p>
+                <% } else { %>
+                    <p style="margin-top: 20px; color: #721c24;">
+                        ⚠️ Access denied. Please contact your administrator if you believe this is an error.
+                    </p>
+                <% } %>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>📊 ABAC Policy Evaluation Details</h3>
+                <table class="table">
+                    <tr>
+                        <td><strong>Policy Check</strong></td>
+                        <td><strong>Status</strong></td>
+                        <td><strong>Details</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Role Authorization</td>
+                        <td>
+                            <span class="badge <%= result.policyChecks.roleAuth.status === 'Passed' ? 'badge-success' : 'badge-danger' %>">
+                                <%= result.policyChecks.roleAuth.status === 'Passed' ? '✓ Passed' : '✗ Failed' %>
+                            </span>
+                        </td>
+                        <td><%= result.policyChecks.roleAuth.details %></td>
+                    </tr>
+                    <% if (result.policyChecks.departmentMatch) { %>
+                    <tr>
+                        <td>Department Match</td>
+                        <td>
+                            <span class="badge <%= result.policyChecks.departmentMatch.status === 'Passed' ? 'badge-success' : 'badge-danger' %>">
+                                <%= result.policyChecks.departmentMatch.status === 'Passed' ? '✓ Passed' : '✗ Failed' %>
+                            </span>
+                        </td>
+                        <td><%= result.policyChecks.departmentMatch.details %></td>
+                    </tr>
+                    <% } %>
+                    <% if (result.policyChecks.timeRestriction) { %>
+                    <tr>
+                        <td>Time Restriction</td>
+                        <td>
+                            <span class="badge <%= result.policyChecks.timeRestriction.status === 'Passed' ? 'badge-success' : 'badge-danger' %>">
+                                <%= result.policyChecks.timeRestriction.status === 'Passed' ? '✓ Passed' : '✗ Failed' %>
+                            </span>
+                        </td>
+                        <td><%= result.policyChecks.timeRestriction.details %></td>
+                    </tr>
+                    <% } %>
+                    <% if (result.policyChecks.sensitivityLevel) { %>
+                    <tr>
+                        <td>Sensitivity Level</td>
+                        <td>
+                            <span class="badge <%= result.policyChecks.sensitivityLevel.status === 'Passed' ? 'badge-success' : 'badge-danger' %>">
+                                <%= result.policyChecks.sensitivityLevel.status === 'Passed' ? '✓ Passed' : '✗ Failed' %>
+                            </span>
+                        </td>
+                        <td><%= result.policyChecks.sensitivityLevel.details %></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/dashboard" class="btn btn-primary">← Back to Resources</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# ======================================================
+# Node.js Project .gitignore for Access Control App
+# ======================================================
+
+# Node dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs and debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup or temporary SQL files
+*_backup.sql
+*.bak
+*.tmp
+
+# Optional: ignore database files (if you ever export .db)
+*.db
+*.sqlite
+
+# Local configuration or sensitive data (if any)
+config/local.js
+config/local.json
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+
+# System metadata
+*.log
+*.cache
+
+# ======================================================
+# End of file
+# ======================================================

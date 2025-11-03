@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AccessIQ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="register-page">
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="register-icon">📝</div>
+                <h2 class="register-title">Register – AccessIQ</h2>
+                <p class="register-subtitle">Create your account to get started</p>
+            </div>
+            
+            <% if (error) { %>
+                <div class="alert alert-danger register-alert"><%= error %></div>
+            <% } %>
+            
+            <% if (message) { %>
+                <div class="alert alert-success register-alert"><%= message %></div>
+            <% } %>
+            
+            <form method="POST" action="/register" class="register-form">
+                <div class="form-group">
+                    <label for="username" class="register-label">Username</label>
+                    <input type="text" id="username" name="username" class="register-input" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="register-label">Password</label>
+                    <input type="password" id="password" name="password" class="register-input" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role" class="register-label">Role</label>
+                    <select id="role" name="role" class="register-select" required>
+                        <option value="">Select Role</option>
+                        <% roles.forEach(role => { %>
+                            <option value="<%= role.name %>"><%= role.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="department" class="register-label">Department</label>
+                    <select id="department" name="department" class="register-select" required>
+                        <option value="">Select Department</option>
+                        <% departments.forEach(dept => { %>
+                            <option value="<%= dept.name %>"><%= dept.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                
+                <button type="submit" class="register-btn">
+                    <span class="btn-text">Register</span>
+                </button>
+            </form>
+            
+            <div class="register-footer">
+                <p>Already have an account? <a href="/login" class="login-link">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
