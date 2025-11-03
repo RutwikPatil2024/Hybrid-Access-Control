@@ -4,7 +4,7 @@
   "description": "AccessIQ - Attribute-Based Access Control (ABAC) Web Application",
   "main": "server.js",
   "scripts": {
-  "start": "node auto_import.js && node server.js",
+  "start": "node server.js",
   "dev": "nodemon server.js"
   },
   "dependencies": {
