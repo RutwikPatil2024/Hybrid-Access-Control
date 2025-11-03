@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "import": "node import_backup.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "cloud-import": "node import_to_cloud.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
