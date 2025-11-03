@@ -1,27 +1,31 @@
 // auto_import.js
 const fs = require("fs");
 const mysql = require("mysql2");
+const url = require("url");
 
 console.log("🚀 Starting automatic SQL import...");
 
 try {
-  if (!fs.existsSync("./abac_backup.sql")) {
-    console.error("❌ abac_backup.sql not found in project root!");
+  if (!process.env.DATABASE_URL) {
+    console.error("❌ DATABASE_URL not found. Check Railway environment variables.");
     process.exit(1);
   }
 
   const sql = fs.readFileSync("./abac_backup.sql", "utf8");
 
+  // Parse DATABASE_URL
+  const parsedUrl = new url.URL(process.env.DATABASE_URL);
+
   const conn = mysql.createConnection({
-    host: process.env.MYSQLHOST,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
-    port: process.env.MYSQLPORT,
+    host: parsedUrl.hostname,
+    user: parsedUrl.username,
+    password: parsedUrl.password,
+    database: parsedUrl.pathname.replace("/", ""),
+    port: parsedUrl.port || 3306,
     multipleStatements: true,
   });
 
-  conn.query(sql, (err, results) => {
+  conn.query(sql, (err) => {
     if (err) {
       console.error("❌ Import failed with SQL error:");
       console.error(err);
